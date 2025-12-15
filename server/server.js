@@ -10,8 +10,17 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // 1. Security Middlewares
-app.use(helmet()); // Protect headers
-app.use(cors({ origin: process.env.CLIENT_URL || "http://localhost:5173" })); // Strict CORS
+app.use(helmet());
+app.use(cors({
+  origin: [
+    "http://localhost:3000", // Docker Frontend
+    "http://localhost:5173", // Vite Local Dev
+    "http://127.0.0.1:3000"  // Docker IP variant
+  ],
+  methods: ["GET", "POST"],
+  credentials: true
+}));
+
 app.use(express.json({ limit: '10kb' })); // Prevent DoS by limiting body size
 
 // 2. Rate Limiting (Big Tech Standard)
@@ -22,7 +31,10 @@ const limiter = rateLimit({
 });
 app.use('/api', limiter);
 
-// 3. Health Check (For Kubernetes/Docker)
+// 3.Register Routes
+app.use('/api', scanRoutes);
+
+// 4. Health Check (For Kubernetes/Docker)
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'UP', timestamp: new Date() });
 });
@@ -31,4 +43,3 @@ app.listen(PORT, () => {
   console.log(`[Server] Running securely on port ${PORT}`);
 });
 
-app.use('/api', scanRoutes);

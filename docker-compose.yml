@@ -1,7 +1,11 @@
 version: '3.8'
 
 services:
-  # The Brain (Node + Python + Nmap)
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+
   backend:
     build:
       context: .
@@ -10,10 +14,25 @@ services:
       - "5000:5000"
     environment:
       - PORT=5000
-      # In Docker, we talk to other containers by service name, not localhost!
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
       - CLIENT_URL=http://localhost:3000
+    depends_on:
+      - redis
 
-  # The Face (React + Nginx)
+  worker:
+    build: # Reuses the same image as backend!
+      context: .
+      dockerfile: server/Dockerfile
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    # Override the command to run the worker script instead of the server
+    command: ["node", "worker.js"]
+    depends_on:
+      - redis
+      - backend
+
   frontend:
     build:
       context: ./client
