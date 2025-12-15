@@ -1,0 +1,9 @@
+{"level":"info","message":"Starting quick scan on 8.8.8.8"}
+{"level":"error","message":"Scan failed with code 1: Traceback (most recent call last):\n  File \"/home/rdx/VulnVault/engine/scanner.py\", line 3, in <module>\n    import nmap\nModuleNotFoundError: No module named 'nmap'\n"}
+{"level":"info","message":"Starting quick scan on 8.8.8.8"}
+{"level":"error","message":"Scan failed with code 1: Traceback (most recent call last):\n  File \"/home/rdx/VulnVault/engine/scanner.py\", line 3, in <module>\n    import nmap\nModuleNotFoundError: No module named 'nmap'\n"}
+{"level":"info","message":"Starting quick scan on 8.8.8.8"}
+{"level":"error","message":"Scan failed with code 2: /home/rdx/VulnVault/engine/venv/bin/python3: can't open file '/home/rdx/VulnVault/engine/venv/bin/scanner.py': [Errno 2] No such file or directory\n"}
+{"level":"info","message":"Starting quick scan on 8.8.8.8"}
+{"level":"info","message":"Spawning Python: ${pythonPath} running ${scriptPath}"}
+{"level":"info","message":"Scan completed successfully for 8.8.8.8"}
