@@ -7,3 +7,9 @@
 {"level":"info","message":"Starting quick scan on 8.8.8.8"}
 {"level":"info","message":"Spawning Python: ${pythonPath} running ${scriptPath}"}
 {"level":"info","message":"Scan completed successfully for 8.8.8.8"}
+{"level":"info","message":"Starting quick scan on 8.8.8.8"}
+{"level":"info","message":"Spawning Python: ${pythonPath} running ${scriptPath}"}
+{"level":"info","message":"Scan completed successfully for 8.8.8.8"}
+{"level":"info","message":"Starting full scan on 8.8.8.8"}
+{"level":"info","message":"Spawning Python: ${pythonPath} running ${scriptPath}"}
+{"level":"info","message":"Scan completed successfully for 8.8.8.8"}
