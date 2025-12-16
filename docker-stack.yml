@@ -84,7 +84,7 @@ services:
         condition: on-failure
       labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.frontend.rule=Host(`vulnvault.13.62.52.74.nip.io`)"
+        - "traefik.http.routers.frontend.rule=Host(`vulnvault.51.20.122.16.nip.io`)"
         - "traefik.http.routers.frontend.entrypoints=websecure"
         - "traefik.http.routers.frontend.tls.certresolver=myresolver"
         - "traefik.http.services.frontend.loadbalancer.server.port=80"
