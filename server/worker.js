@@ -11,7 +11,7 @@ const worker = new Worker('scan-queue', async (job) => {
 
   return new Promise((resolve, reject) => {
     // 1. Define Paths (Same as before)
-    const pythonPath = path.resolve(__dirname, '../engine/venv/bin/python3');
+    const pythonPath = 'python3';
     const scriptPath = path.resolve(__dirname, '../engine/scanner.py');
 
     // 2. Spawn Python
