@@ -54,7 +54,7 @@ jobs:
         host: ${{ secrets.SERVER_HOST }}
         username: ubuntu
         key: ${{ secrets.SSH_PRIVATE_KEY }}
-        source: "docker-stack.yml"
+        source: "docker-stack.yml,prometheus/"
         target: "/home/ubuntu/"
 
     # 7. Deploy to Swarm
