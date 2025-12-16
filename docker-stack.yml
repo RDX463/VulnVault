@@ -9,6 +9,42 @@ services:
       replicas: 1
       restart_policy:
         condition: on-failure
+  # --- MongoDB ---
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - db-data:/data/db
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+  traefik:
+    image: traefik:v2.10
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.swarmMode=true"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
+      - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
+      - "--certificatesresolvers.myresolver.acme.email=balsarafrohan627@gmail.com"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8081:8080" # Traefik Dashboard (moved to 8081 to avoid conflict)
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "traefik-certificates:/letsencrypt"
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.role == manager
 
   backend:
     image: rdx463/vulnvault-backend:latest
@@ -16,6 +52,7 @@ services:
       - PORT=5000
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+      - MONGO_URI=mongodb://mongo:27017/vulnvault
     ports:
       - "5000:5000"
     deploy:
@@ -32,6 +69,7 @@ services:
     environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+      - MONGO_URI=mongodb://mongo:27017/vulnvault
       - DISCORD_WEBHOOK=https://discordapp.com/api/webhooks/1450416047525203979/31aRhxua2U2FslBW3qZp27BNquF9OmMZO_R5ZLLRC2Hy7-wc5XnnVhaAeass0EwotIW8
     deploy:
       replicas: 1
@@ -40,12 +78,16 @@ services:
 
   frontend:
     image: rdx463/vulnvault-frontend:latest
-    ports:
-      - "3000:80"
     deploy:
       replicas: 1
       restart_policy:
         condition: on-failure
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.frontend.rule=Host(`vulnvault.13.62.126.32.nip.io`)"
+        - "traefik.http.routers.frontend.entrypoints=websecure"
+        - "traefik.http.routers.frontend.tls.certresolver=myresolver"
+        - "traefik.http.services.frontend.loadbalancer.server.port=80"
 
   visualizer:
     image: dockersamples/visualizer:stable
@@ -54,8 +96,10 @@ services:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
     deploy:
+      replicas: 1
       placement:
-        constraints: [node.role == manager]
+        constraints:
+          - node.role == manager
 
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:latest
@@ -88,3 +132,7 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=admin
     deploy:
       replicas: 1
+
+volumes:
+  db-data:
+  traefik-certificates:
