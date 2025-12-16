@@ -4,17 +4,17 @@ FROM node:18-slim
 # Install system dependencies
 RUN apt-get update && apt-get install -y python3 nmap && rm -rf /var/lib/apt/lists/*
 
-# Set the root as working directory
+# Set working directory
 WORKDIR /app
 
-# Copy package files (from root)
-COPY package*.json ./
+# 1. Copy package files FROM THE SERVER FOLDER
+COPY server/package*.json ./
 
-# Install dependencies
+# 2. Install dependencies
 RUN npm install
 
-# Copy EVERYTHING from root into /app
+# 3. Copy EVERYTHING from root
 COPY . .
 
-# Default command (matches the path we expect)
+# Default command
 CMD ["node", "server/server.js"]
